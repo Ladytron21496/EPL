@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>EPL DATA</title>
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+body{
+  background: #2980b9; /* fallback for old browsers */
+background: linear-gradient(to top, #2980b9, #6dd5fa, #ffffff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+    </style>
+  </head>
+
+  <body>
+
+
+<h1>EPL Historical Data </h1>
+<input type="date" data-date="" data-date-format="DD MMMM YYYY" placeholder="Enter Start Date" id="sd">
+<input type="date" data-date="" data-date-format="DD MMMM YYYY" placeholder="Enter End Date" id="ed">
+<button onclick="Myfunction()">Submit</button>
+
+<br></br>
+
+<div style="margin-left:420px;" id="result"></div>
+
+<script>
+
+
+async function getData(sd,ed)
+{
+
+const response= await fetch(`https://stroccoli-futbol-science-v1.p.rapidapi.com/s1/results/${sd}/${ed}?tournament_name=English%20Premier%20League`, {
+	"method": "GET",
+	"headers": {
+		"x-rapidapi-host": "stroccoli-futbol-science-v1.p.rapidapi.com",
+		"x-rapidapi-key": "c713ea61a6msh1244b5deeee92e6p14faa1jsn640a6cf7e43e"
+	}
+});
+const d =await response.json();
+console.log(d);
+if(d.length==0)
+{
+  alert("No Data Present For given interval please enter some other interval");
+}
+else
+manipulate(d);
+}
+
+
+function Myfunction(val)
+{
+var x=document.getElementById("sd").value;
+var y=document.getElementById("ed").value;
+getData(x,y);
+}
+
+
+function manipulate(x)
+{
+var thtml="";
+var nhtml="";
+x.map((item)=>{
+  nhtml=nhtml+`<div style='margin-left:22px;'>${item.event_name}</div>`+"<div style='padding:20px'>"+`<img style='margin-right:80px;' src=${item.home_team.image}>`+ `<img src=${item.visitant_team.image}>`+`<p style='position:relative;right:190px;'>This match was played between ${item.home_team.name["full"]} and ${item.visitant_team.name["full"]} on ${item.date} at ${item.stadium}. The score was ${item.result[0]} - ${item.result[1]} </p>`+"<hr style='position:relative;right:200px;'></hr>" + "</div>";
+})
+document.getElementById("result").innerHTML=nhtml;
+}
+
+
+</script>
+</body>
+</html>
